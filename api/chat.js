@@ -1,5 +1,7 @@
 // api/chat.js
 
+const fetch = require('node-fetch'); // pokud to Vercel neimportuje automaticky
+
 module.exports = async function handler(req, res) {
   // 1) Jen POST
   if (req.method !== 'POST') {
