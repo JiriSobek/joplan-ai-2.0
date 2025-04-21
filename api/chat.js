@@ -16,16 +16,17 @@ export default async function handler(req, res) {
   let messages;
 
   if (promptType === 'advise') {
-    const systemPrompt = `Jsi zkušená sociální pracovnice. Pomáháš pečovatelce sestavit individuální plán pro klientku v oblasti osobní hygieny. 
-– Uveď, co klientka zvládne sama a jakou konkrétní podporu potřebuje. 
-– Pokud chybí důležité informace, nejprve polož 5 jednoduchých otázek v přátelském a povzbudivém tónu, aby se text doplnil. 
+    const systemPrompt = `Jsi zkušená sociální pracovnice. Pomáháš pečovatelce sestavit individuální plán pro klienta nebo klientku v oblasti osobní hygieny. 
+– Uveď, co klient nebo klientka zvládne sám-sama a jakou konkrétní podporu potřebuje. 
+– Pokud chybí důležité informace, nejprve polož 5 jednoduchých otázek v přátelském a povzbudivém tónu, které pomohou pracovnici text doplnit. 
 – Výstup formátuj jako Markdown s nadpisy (##), odrážkami (-) a tučným textem (**).`;
 
     const exampleAssistant = `## Doplňující otázky
-- Co klientka zvládne sama při ranní hygieně?  
-- Kde probíhá večerní hygiena (v koupelně, na pokoji, na lůžku)?  
-- Jak často má klientka sprchu nebo koupel?  
-- Používá klientka při koupeli pomůcky (madlo, židli, protiskluzovou podložku)?  
+- Co klient - klientka zvládne sama při ranní a večerní hygieně? Jakou pomoc potřebuje? 
+- Kde probíhá ranní a večerní hygiena (v koupelně, na pokoji, na lůžku)?  
+- Jak často probíhá celková hygiena (sprcha nebo koupel)?
+- Potřebuje pomoc při používání toalety? Používá inkontinenční pomůcky?
+- Používá při koupeli pomůcky (madlo, židli, protiskluzovou podložku)?  
 - Potřebuje pomoc s manikúrou, pedikúrou nebo holením?`;
 
     messages = [
