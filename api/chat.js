@@ -1,19 +1,20 @@
-// api/ask.js
+// api/chat.js
 
 export default async function handler(req, res) {
-  // Povolit pouze POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Získat text od uživatele
-  const { userText } = req.body;
-  if (!userText || typeof userText !== 'string') {
-    return res.status(400).json({ error: 'Missing or invalid userText' });
+  const { promptType, userText } = req.body;
+  if (
+    !userText ||
+    (promptType !== 'advise' && promptType !== 'improve')
+  ) {
+    return res.status(400).json({ error: 'Missing or wrong parameters' });
   }
 
-  // Systémový prompt pro tlačítko „Poradit“
-  const systemPrompt = `
+  // Build two different systemPrompts:
+  const advisePrompt = `
 Jsi zkušená a vřelá sociální pracovnice, která pomáhá pečovatelkám sestavit individuální plán klienta nebo klientky v oblasti osobní hygieny.
 
 Tvým úkolem je zhodnotit text popisu podpory a poradit, co v něm případně chybí nebo by šlo doplnit. Hodnotíš v přátelském a povzbudivém tónu. Když je text v pořádku, ocenění stačí.
@@ -39,36 +40,42 @@ Pokud v textu něco chybí nebo je příliš obecné, napiš:
 Pokud je zápis kvalitní, jen ho pochval a nepřidávej žádné otázky.
 
 Formátuj odpověď jako Markdown:
-- používej nadpisy (`## Hodnocení`, `## Otázky`),
+- používej nadpisy (\`## Hodnocení\`, \`## Otázky\`),
 - tučně zvýrazni důležité části,
 - používej odrážky.
 
 Vystupuj v přátelském, vřelém a podporujícím tónu.
 `.trim();
 
-  // Sestavení zpráv pro OpenAI
+  const improvePrompt = `
+Jsi profesionální redaktor. Přeformuluj následující text tak, aby byl jasnější, stručnější a profesionální.
+Výstup formátuj jako čistý text v přehledných odstavcích.
+`.trim();
+
+  const systemPrompt = promptType === 'advise'
+    ? advisePrompt
+    : improvePrompt;
+
   const messages = [
-    { role: 'system', content: systemPrompt },
-    { role: 'user',   content: userText }
+    { role: 'system',  content: systemPrompt },
+    { role: 'user',    content: userText }
   ];
 
-  // Připravit payload pro OpenAI API
   const payload = {
-    model: process.env.OPENAI_API_MODEL,
+    model:   process.env.OPENAI_API_MODEL,
     messages,
     temperature: 0.6,
-    top_p: 0.9,
-    max_tokens: 800
+    top_p:       0.9,
+    max_tokens:  800
   };
 
   try {
-    // Volání OpenAI Chat Completions
     const response = await fetch(
       `${process.env.OPENAI_API_BASE}/chat/completions`,
       {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type':  'application/json',
           'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
         },
         body: JSON.stringify(payload)
@@ -82,16 +89,11 @@ Vystupuj v přátelském, vřelém a podporujícím tónu.
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content?.trim() || '';
-
-    // Vrátit výsledek front-endu
-    return res.status(200).json({ result: content });
+    const result = data.choices?.[0]?.message?.content?.trim() || '';
+    return res.status(200).json({ result });
 
   } catch (err) {
     console.error('Fetch error:', err);
-    return res.status(500).json({
-      error: 'OpenAI request failed',
-      details: err.message
-    });
+    return res.status(500).json({ error: 'OpenAI request failed', details: err.message });
   }
 }
