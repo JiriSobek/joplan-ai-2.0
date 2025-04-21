@@ -1,12 +1,13 @@
 // api/chat.js
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // 1) Jen POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { promptType, userText } = req.body;
+  // 2) Parsování těla
+  const { promptType, userText } = req.body || {};
   if (
     !userText ||
     (promptType !== 'advise' && promptType !== 'improve')
@@ -14,7 +15,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing or wrong parameters' });
   }
 
-  // 2) Systémové prompty
+  // 3) Systémové prompty
   const advisePrompt = `
 Jsi zkušená a vřelá sociální pracovnice, která pomáhá pečovatelkám sestavit individuální plán klienta nebo klientky v oblasti osobní hygieny.
 
@@ -38,16 +39,17 @@ Pokud v textu něco chybí, napiš:
 - **5–7 doplňujících otázek** (stručně, konkrétně)
 - doporučení, co upřesnit
 
-Formátuj jako Markdown s nadpisy (`##`), odrážkami (`-`) a tučným textem (`**`).
+Formátuj jako Markdown s nadpisy (\`##\`), odrážkami (\`-\`) a tučným textem (\`**\`).
 `.trim();
 
   const improvePrompt = `
-Jsi profesionální redaktor. Přeformuluj následující text tak, aby byl jasnější, stručnější a profesionální. Výstup formátuj jako čistý text v přehledných odstavcích.
+Jsi profesionální redaktor. Přeformuluj následující text tak, aby byl jasnější, stručnější a profesionální.
+Výstup formátuj jako čistý text v přehledných odstavcích.
 `.trim();
 
   const systemPrompt = promptType === 'advise' ? advisePrompt : improvePrompt;
 
-  // 3) Poskládáme messages
+  // 4) Build messages a payload pro OpenAI
   const messages = [
     { role: 'system', content: systemPrompt },
     { role: 'user',   content: userText }
@@ -62,7 +64,7 @@ Jsi profesionální redaktor. Přeformuluj následující text tak, aby byl jasn
   };
 
   try {
-    // 4) Call OpenAI
+    // 5) Volání OpenAI API
     const response = await fetch(
       `${process.env.OPENAI_API_BASE}/chat/completions`,
       {
@@ -89,4 +91,4 @@ Jsi profesionální redaktor. Přeformuluj následující text tak, aby byl jasn
     console.error('Fetch error:', err);
     return res.status(500).json({ error: 'OpenAI request failed', details: err.message });
   }
-}
+};
