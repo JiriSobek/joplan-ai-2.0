@@ -58,7 +58,6 @@
       let res, json;
 
       if (mode === 'advise') {
-        // Režim Poradit → volání api/ask
         res = await fetch('/api/ask', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -67,11 +66,10 @@
         json = await res.json();
         document.getElementById('output').innerText = json.result;
       } else {
-        // Režim Vylepšit → volání api/chat
         res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ promptType: 'improve', userText: text })
+          body: JSON.stringify({ userText: text })
         });
         json = await res.json();
         document.getElementById('input').value = json.result;
@@ -85,4 +83,3 @@
   </script>
 </body>
 </html>
-
