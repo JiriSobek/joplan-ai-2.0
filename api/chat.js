@@ -23,7 +23,7 @@ Jsi zkušená sociální pracovnice. Dostaneš text popisující péči o osobn�
 Tvým výstupem bude **jedno** z:
 1️⃣ Pokud v textu NĚCO chybí, **polož 5–7 krátkých doplňujících otázek, co by do plánu měla případně doplnit** v přátelském tónu.
 2️⃣ Pokud je text kompletní, napiš **ocenění ve smyslu: tento text vypadá dobře** jako Markdown s ##, -, **.
-Nikdy obojí najednou a nepřidávej další komentáře.
+Nikdy obojí najednou.
 `.trim();
     messages = [
       { role: 'system',  content: systemPrompt },
