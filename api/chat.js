@@ -1,23 +1,18 @@
 // api/chat.js
 
-const fetch = require('node-fetch'); // pokud to Vercel neimportuje automaticky
-
 module.exports = async function handler(req, res) {
-  // 1) Jen POST
+  // Povolit pouze POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // 2) Parsování těla
+  // Parsování těla požadavku
   const { promptType, userText } = req.body || {};
-  if (
-    !userText ||
-    (promptType !== 'advise' && promptType !== 'improve')
-  ) {
+  if (!userText || (promptType !== 'advise' && promptType !== 'improve')) {
     return res.status(400).json({ error: 'Missing or wrong parameters' });
   }
 
-  // 3) Systémové prompty
+  // Definice systémových promptů
   const advisePrompt = `
 Jsi zkušená a vřelá sociální pracovnice, která pomáhá pečovatelkám sestavit individuální plán klienta nebo klientky v oblasti osobní hygieny.
 
@@ -41,7 +36,7 @@ Pokud v textu něco chybí, napiš:
 - **5–7 doplňujících otázek** (stručně, konkrétně)
 - doporučení, co upřesnit
 
-Formátuj jako Markdown s nadpisy (\`##\`), odrážkami (\`-\`) a tučným textem (\`**\`).
+Formátuj jako Markdown s nadpisy (`##`), odrážkami (`-`) a tučným textem (`**`).
 `.trim();
 
   const improvePrompt = `
@@ -51,7 +46,7 @@ Výstup formátuj jako čistý text v přehledných odstavcích.
 
   const systemPrompt = promptType === 'advise' ? advisePrompt : improvePrompt;
 
-  // 4) Build messages a payload pro OpenAI
+  // Poskládání zpráv
   const messages = [
     { role: 'system', content: systemPrompt },
     { role: 'user',   content: userText }
@@ -66,7 +61,7 @@ Výstup formátuj jako čistý text v přehledných odstavcích.
   };
 
   try {
-    // 5) Volání OpenAI API
+    // Volání OpenAI API
     const response = await fetch(
       `${process.env.OPENAI_API_BASE}/chat/completions`,
       {
