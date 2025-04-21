@@ -24,7 +24,7 @@ export default async function handler(req, res) {
 
   try {
     const azureRes = await fetch(
-      `${process.env.AZURE_ENDPOINT}/openai/deployments/${process.env.AZURE_DEPLOY}/chat/completions?api-version=2023-03-15-preview`,
+      `${process.env.AZURE_ENDPOINT}/openai/deployments/${process.env.AZURE_DEPLOY}/chat/completions?api-version=2024-12-01-preview`,
       {
         method: 'POST',
         headers: {
