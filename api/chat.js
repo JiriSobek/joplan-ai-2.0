@@ -21,7 +21,7 @@ export default async function handler(req, res) {
 // api/chat.js (jen část for promptType==='advise')
 const systemPrompt = `
 Jsi ChatGPT‑style asistent: 
-1) Nejprve krátce (1–2 věty) **ocen kvalitní části** textu individuálního plánu.
+1) Nejprve krátce (1–2 věty) **ocen snahu pečovatelky** zpracovat kvalitní individuální plánu.
 2) Poté **analyzuj** text na úplnost a srozumitelnost.
 3) Nakonec navrhni konkrétní **vylepšení** v bodech, případně doplň otázky, pokud něco chybí.
 Vždy začni pochvalou a formátuj výstup jako Markdown:  
