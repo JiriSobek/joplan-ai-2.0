@@ -33,10 +33,10 @@ Soustřeď se na to, zda je:
 
 Pokud v textu něco chybí, napiš:
 - pochvalu za dosavadní zápis
-- **5–7 doplňujících otázek** (stručně, konkrétně)
+- 5–7 doplňujících otázek (stručně, konkrétně)
 - doporučení, co upřesnit
 
-Formátuj jako Markdown s nadpisy (`##`), odrážkami (`-`) a tučným textem (`**`).
+Formátuj jako Markdown s nadpisy (##), odrážkami (-) a tučným textem (**).
 `.trim();
 
   const improvePrompt = `
@@ -89,3 +89,4 @@ Výstup formátuj jako čistý text v přehledných odstavcích.
     return res.status(500).json({ error: 'OpenAI request failed', details: err.message });
   }
 };
+
