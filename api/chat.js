@@ -62,7 +62,7 @@ Vystupuj v přátelském, vřelém a podporujícím tónu.
   };
 
   try {
-    // Zavolat OpenAI Chat Completions
+    // Volání OpenAI Chat Completions
     const response = await fetch(
       `${process.env.OPENAI_API_BASE}/chat/completions`,
       {
@@ -84,7 +84,7 @@ Vystupuj v přátelském, vřelém a podporujícím tónu.
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content?.trim() || '';
 
-    // Vrátit výsledek front‑endu
+    // Vrátit výsledek front-endu
     return res.status(200).json({ result: content });
 
   } catch (err) {
