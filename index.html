@@ -48,32 +48,42 @@
   <button id="copy">Kopírovat</button>
   <div id="output"></div>
 
-  <script>
-    let originalText = '';
+<script>
+  let originalText = '';
 
-    async function runPrompt(mode) {
-      const text = document.getElementById('input').value;
-      if (mode === 'improve') originalText = text;
+  async function runPrompt(mode) {
+    const text = document.getElementById('input').value;
+    if (mode === 'improve') originalText = text;
 
-      // vždy voláme /api/chat s promptType i userText
-      const res = await fetch('/api/chat', {
+    let res, json;
+
+    if (mode === 'advise') {
+      // Voláme /api/ask
+      res = await fetch('/api/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ promptType: mode, userText: text })
+        body: JSON.stringify({ userText: text })
       });
-      const json = await res.json();
+      json = await res.json();
+      document.getElementById('output').innerText = json.result;
 
-      if (mode === 'improve') {
-        document.getElementById('input').value = json.result;
-      } else {
-        document.getElementById('output').innerText = json.result;
-      }
+    } else {
+      // Voláme /api/chat
+      res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userText: text })
+      });
+      json = await res.json();
+      document.getElementById('input').value = json.result;
     }
+  }
 
-    document.getElementById('advise').onclick  = () => runPrompt('advise');
-    document.getElementById('improve').onclick = () => runPrompt('improve');
-    document.getElementById('undo').onclick    = () => document.getElementById('input').value = originalText;
-    document.getElementById('copy').onclick    = () => navigator.clipboard.writeText(document.getElementById('input').value);
-  </script>
+  document.getElementById('advise').onclick  = () => runPrompt('advise');
+  document.getElementById('improve').onclick = () => runPrompt('improve');
+  document.getElementById('undo').onclick    = () => document.getElementById('input').value = originalText;
+  document.getElementById('copy').onclick    = () => navigator.clipboard.writeText(document.getElementById('input').value);
+</script>
+
 </body>
 </html>
