@@ -1,11 +1,15 @@
 // api/chat.js
 export default async function handler(req, res) {
+  console.log('––– NEW /api/chat CALL –––');
+  console.log('Request body:', JSON.stringify(req.body));
+
   if (req.method !== 'POST') {
+    console.error('Wrong method:', req.method);
     return res.status(405).json({ error: 'Method not allowed' });
   }
-
   const { promptType, userText } = req.body;
   if (!userText || !promptType) {
+    console.error('Missing params:', req.body);
     return res.status(400).json({ error: 'Missing parameters' });
   }
 
@@ -33,10 +37,14 @@ export default async function handler(req, res) {
       }
     );
     const data = await azureRes.json();
-    const content = data.choices?.[0]?.message?.content?.trim() || '';
-    res.status(200).json({ result: content });
+    console.log('Azure status:', azureRes.status);
+    console.log('Azure response data:', JSON.stringify(data));
+
+    // Prozatím posíláme úplnou odpověď Azure na front‑end
+    return res.status(200).json(data);
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Azure OpenAI request failed' });
+    console.error('Fetch error:', err);
+    return res.status(500).json({ error: 'Azure OpenAI request failed', details: err.message });
   }
 }
