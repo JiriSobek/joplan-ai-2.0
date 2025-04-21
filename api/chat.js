@@ -1,47 +1,46 @@
 // api/chat.js
-
 export default async function handler(req, res) {
+  // 1) Metoda
   if (req.method !== 'POST') {
+    console.error('🔴 Wrong method:', req.method);
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const { promptType, userText } = req.body;
-  if (
-    !userText ||
-    (promptType !== 'advise' && promptType !== 'improve')
-  ) {
+  console.log('➡️  promptType=', promptType, ' | userText=', userText?.substring(0,50), '…');
+
+  // 2) Validace
+  if (!userText || (promptType !== 'advise' && promptType !== 'improve')) {
+    console.error('🔴 Missing or wrong parameters:', req.body);
     return res.status(400).json({ error: 'Missing or wrong parameters' });
   }
 
+  // 3) Vytvoření messages
   let messages;
-
   if (promptType === 'advise') {
-    // Jediný system prompt s větvením: buď otázky, nebo finální plán
     const systemPrompt = `
-Jsi zkušená sociální pracovnice. Dostaneš od pečovatelky text popisující péči v oblasti osobní hygieny její klientky. Tvým výstupem bude **jedno** z:
-
-1️⃣ Pokud v textu NĚCO chybí (např. co zvládne sama klientka, kde probíhá hygiena, jak často, jaké pomůcky používá, rizika apod.), **polož pouze** 5–7 krátkých, přátelských a povzbudivých doplňujících otázek v odrážkách.  
-2️⃣ Pokud je text kompletní, napiš podrobný doporučující plán, formátuj jako Markdown s nadpisy (##), odrážkami (-) a tučným textem (**).
-
-Nepiš nikdy obojí najednou a neuváděj další komentáře ani nadpisy.
+Jsi zkušená sociální pracovnice. Dostaneš text popisující péči o osobní hygienu klientky.
+Tvým výstupem bude **jedno** z:
+1️⃣ Pokud v textu NĚCO chybí, **oceň pečovatelku za její snahu napsat dobrý individuální plán a polož 5–7 krátkých doplňujících otázek, co by do plánu měla případně doplnit** v přátelském tónu.
+2️⃣ Pokud je text kompletní, napiš **ocenění ve smyslu: tento text vypadá dobře** jako Markdown s ##, -, **.
+Nikdy obojí najednou a nepřidávej další komentáře.
 `.trim();
-
     messages = [
-      { role: 'system', content: systemPrompt },
-      { role: 'user',   content: userText }
+      { role: 'system',  content: systemPrompt },
+      { role: 'user',    content: userText }
     ];
-
   } else {
-    // režim "improve"
-    const systemPrompt = `Jsi profesionální redaktor. Přeformuluj následující text tak, aby byl jasnější, stručnější a profesionální. 
-Výstup formátuj jako čistý text oddělený do přehledných odstavců.`;
-
+    const systemPrompt = `
+Jsi profesionální redaktor. Přeformuluj následující text tak, aby byl jasnější, stručnější a profesionální.
+Výstup formátuj jako čistý text v přehledných odstavcích.
+`.trim();
     messages = [
-      { role: 'system', content: systemPrompt },
-      { role: 'user',   content: userText }
+      { role: 'system',  content: systemPrompt },
+      { role: 'user',    content: userText }
     ];
   }
 
+  // 4) Zavolání Azure
   const payload = {
     messages,
     temperature: 0.6,
@@ -61,13 +60,12 @@ Výstup formátuj jako čistý text oddělený do přehledných odstavců.`;
         body: JSON.stringify(payload)
       }
     );
-
     const data = await azureRes.json();
+    console.log('🟢 Azure status=', azureRes.status, 'choices=', data.choices?.length);
     const content = data.choices?.[0]?.message?.content?.trim() || '';
     return res.status(200).json({ result: content });
-
   } catch (err) {
-    console.error('Azure request failed:', err);
+    console.error('🔴 Azure request failed:', err);
     return res.status(500).json({
       error: 'Azure OpenAI request failed',
       details: err.message
