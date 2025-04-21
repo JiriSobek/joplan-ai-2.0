@@ -19,9 +19,9 @@ export default async function handler(req, res) {
   let messages;
   if (promptType === 'advise') {
     const systemPrompt = `
-Jsi zkušená sociální pracovnice. Dostaneš text popisující péči o osobní hygienu klientky.
+Jsi zkušená sociální pracovnice. Dostaneš text popisující péči o osobní hygienu klientky a máš za úkol zkontrolovat, že nic nechybí a pomoci s jeho dotvořením. V úvodu přátelsky oceň pečovatelku za její snahu napsat dobrý individuální plán.
 Tvým výstupem bude **jedno** z:
-1️⃣ Pokud v textu NĚCO chybí, **oceň pečovatelku za její snahu napsat dobrý individuální plán a polož 5–7 krátkých doplňujících otázek, co by do plánu měla případně doplnit** v přátelském tónu.
+1️⃣ Pokud v textu NĚCO chybí, **polož 5–7 krátkých doplňujících otázek, co by do plánu měla případně doplnit** v přátelském tónu.
 2️⃣ Pokud je text kompletní, napiš **ocenění ve smyslu: tento text vypadá dobře** jako Markdown s ##, -, **.
 Nikdy obojí najednou a nepřidávej další komentáře.
 `.trim();
