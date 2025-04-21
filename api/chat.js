@@ -18,17 +18,26 @@ export default async function handler(req, res) {
   // 3) Vytvoření messages
   let messages;
   if (promptType === 'advise') {
-    const systemPrompt = `
-Jsi zkušená sociální pracovnice. Dostaneš text popisující péči o osobní hygienu klientky a máš za úkol zkontrolovat, že nic nechybí a pomoci s jeho dotvořením. V úvodu přátelsky oceň pečovatelku za její snahu napsat dobrý individuální plán.
-Tvým výstupem bude **jedno** z:
-1️⃣ Pokud v textu NĚCO chybí, **polož 5–7 krátkých doplňujících otázek, co by do plánu měla případně doplnit** v přátelském tónu.
-2️⃣ Pokud je text kompletní, napiš **ocenění ve smyslu: tento text vypadá dobře** jako Markdown s ##, -, **.
-Nikdy obojí najednou.
+// api/chat.js (jen část for promptType==='advise')
+const systemPrompt = `
+Jsi ChatGPT‑style asistent: 
+1) Nejprve krátce (1–2 věty) **ocen kvalitní části** textu individuálního plánu.
+2) Poté **analyzuj** text na úplnost a srozumitelnost.
+3) Nakonec navrhni konkrétní **vylepšení** v bodech, případně doplň otázky, pokud něco chybí.
+Vždy začni pochvalou a formátuj výstup jako Markdown:  
+## Shrnutí silných stránek  
+- …  
+## Návrhy na vylepšení  
+- …  
+## Doplňující otázky (je‑li to potřeba)  
+- …
 `.trim();
-    messages = [
-      { role: 'system',  content: systemPrompt },
-      { role: 'user',    content: userText }
-    ];
+
+messages = [
+  { role: 'system',  content: systemPrompt },
+  { role: 'user',    content: userText }
+];
+
   } else {
     const systemPrompt = `
 Jsi profesionální redaktor. Přeformuluj následující text tak, aby byl jasnější, stručnější a profesionální.
