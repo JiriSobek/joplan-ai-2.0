@@ -6,31 +6,49 @@ export default async function handler(req, res) {
   }
 
   const { promptType, userText } = req.body;
-  if (!promptType || !userText) {
-    return res.status(400).json({ error: 'Missing parameters' });
+  if (
+    !userText ||
+    (promptType !== 'advise' && promptType !== 'improve')
+  ) {
+    return res.status(400).json({ error: 'Missing or wrong parameters' });
   }
 
-const systemPrompt = promptType === 'advise'
-  ? `Jsi zkušená sociální pracovnice. Pomáháš pečovatelce sestavit
-    individuální plán v oblasti osobní hygieny, kam patří: ranní a večerní
-    hygiena, sprcha, koupel, používání toalety včetně inkontinenčních
-    pomůcek, manikúra, pedikúra, holení. Pomoc by měla být popsána
-    srozumitelně a konkrétně – co klientka zvládne sama a s čím potřebuje
-    podporu. Pokud v textu chybí důležité informace, napiš několik
-    jednoduchých otázek, které pomohou doplnit či upřesnit popis.
-    Otázky piš přátelským a povzbudivým tónem, aby byly srozumitelné i pro
-    klientku s lehkou demencí. Pokud je text kompletní, další otázky
-    nepokládej.`
-  : `Jsi profesionální redaktor. Přeformuluj následující text tak,
-    aby byl jasný, srozumitelný a vhodný do individuálního plánu:
-    `;
+  let messages;
 
+  if (promptType === 'advise') {
+    const systemPrompt = `Jsi zkušená sociální pracovnice. Pomáháš pečovatelce sestavit individuální plán pro klientku v oblasti osobní hygieny. 
+– Uveď, co klientka zvládne sama a jakou konkrétní podporu potřebuje. 
+– Pokud chybí důležité informace, nejprve polož 5 jednoduchých otázek v přátelském a povzbudivém tónu, aby se text doplnil. 
+– Výstup formátuj jako Markdown s nadpisy (##), odrážkami (-) a tučným textem (**).`;
 
-  const payload = {
-    messages: [
+    const exampleAssistant = `## Doplňující otázky
+- Co klientka zvládne sama při ranní hygieně?  
+- Kde probíhá večerní hygiena (v koupelně, na pokoji, na lůžku)?  
+- Jak často má klientka sprchu nebo koupel?  
+- Používá klientka při koupeli pomůcky (madlo, židli, protiskluzovou podložku)?  
+- Potřebuje pomoc s manikúrou, pedikúrou nebo holením?`;
+
+    messages = [
+      { role: 'system',    content: systemPrompt },
+      { role: 'assistant', content: exampleAssistant },
+      { role: 'user',      content: userText }
+    ];
+
+  } else {
+    const systemPrompt = `Jsi profesionální redaktor. Přeformuluj následující text tak, aby byl jasnější, stručnější a profesionální. 
+Výstup formátuj jako čistý text, oddělený do přehledných odstavců.`;
+
+    messages = [
       { role: 'system', content: systemPrompt },
       { role: 'user',   content: userText }
-    ]
+    ];
+  }
+
+  const payload = {
+    messages,
+    temperature: 0.6,
+    top_p: 0.9,
+    max_tokens: 800
   };
 
   try {
@@ -45,7 +63,6 @@ const systemPrompt = promptType === 'advise'
         body: JSON.stringify(payload)
       }
     );
-
     const data = await azureRes.json();
     const content = data.choices?.[0]?.message?.content?.trim() || '';
     return res.status(200).json({ result: content });
@@ -58,4 +75,3 @@ const systemPrompt = promptType === 'advise'
     });
   }
 }
-
