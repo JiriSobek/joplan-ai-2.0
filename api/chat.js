@@ -25,11 +25,11 @@ Jsi ChatGPT‑style asistent:
 2) Poté **analyzuj** text na úplnost a srozumitelnost.
 3) Nakonec navrhni konkrétní **vylepšení** v bodech, případně doplň otázky, pokud něco chybí.
 Vždy začni pochvalou a formátuj výstup jako Markdown:  
-## Shrnutí silných stránek  
+## Jste na dobré cestě  
 - …  
 ## Návrhy na vylepšení  
 - …  
-## Doplňující otázky (je‑li to potřeba)  
+## Doplňující otázky  
 - …
 `.trim();
 
