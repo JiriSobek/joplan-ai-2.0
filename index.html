@@ -36,6 +36,7 @@
       white-space: pre-wrap;
       font-family: sans-serif;
       font-size: 14px;
+      border-radius: 12px;
     }
   </style>
 </head>
@@ -48,44 +49,26 @@
   <div id="output"></div>
 
   <script>
-    // ====== DOHRAJ SI SVÉ hodnoty ======
-    const ENDPOINT = 'https://<tvuj-resource>.openai.azure.com';
-    const KEY      = '<tvuj-api-key>';
-    const DEPLOY   = '<nazev-deploymentu>'; // jak jsi pojmenoval model v Azure
-
     let originalText = '';
 
     async function runPrompt(mode) {
       const text = document.getElementById('input').value;
       if (mode === 'improve') originalText = text;
 
-      const systemPrompt = mode === 'advise'
-        ? 'Prompt č. 1: Posuď následující text a navrhni doporučení pro pečovatelku:'
-        : 'Prompt č. 2: Přeformuluj následující text tak, aby byl jasnější a profesionálnější:';
-
-      const res = await fetch(
-        `${ENDPOINT}/openai/deployments/${DEPLOY}/chat/completions?api-version=2023-03-15-preview`, 
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'api-key': KEY
-          },
-          body: JSON.stringify({
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user',   content: text }
-            ]
-          })
-        }
-      );
-      const j = await res.json();
-      const out = j.choices[0].message.content.trim();
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          promptType: mode,    // 'advise' nebo 'improve'
+          userText: text
+        })
+      });
+      const { result } = await res.json();
 
       if (mode === 'improve') {
-        document.getElementById('input').value = out;
+        document.getElementById('input').value = result;
       } else {
-        document.getElementById('output').innerText = out;
+        document.getElementById('output').innerText = result;
       }
     }
 
@@ -96,3 +79,4 @@
   </script>
 </body>
 </html>
+
