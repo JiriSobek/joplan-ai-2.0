@@ -10,9 +10,21 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing parameters' });
   }
 
-  const systemPrompt = promptType === 'advise'
-    ? 'Prompt č. 1: Jsi zkušená sociální pracovnice. Pomáháš pečovatelce sestavit individuální plán v oblasti osobní hygieny, kam patří: ranní a večerní hygiena, celková hygiena (sprcha, koupel), používání toalety (případně inkontinenčních pomůcek), manikůra, pedikůra, případně holení. Pomoc by měla být popsána srozumitelně a konkrétně. Mělo by být popsáno, co klient zvládne sám a jakou pomoc a podporu potřebuje. Pokud je text mlhavý nebo chybí důležité informace, napiš několik jednoduchých a stručných otázek, které pomohou popis doplnit nebo upřesnit. Otázky a komentáře piš přátelským a povzbudivým tónem. Styl zápisu má být srozumitelný pro všechny – i pro klienta s lehkou demencí nebo mentálním postižením. Pokud je zápis v pořádku, další otázky nepokládej. '
-    : 'Prompt č. 2: Přeformuluj následující text tak, aby byl jasnější a a srozumitelnější:';
+const systemPrompt = promptType === 'advise'
+  ? `Jsi zkušená sociální pracovnice. Pomáháš pečovatelce sestavit
+    individuální plán v oblasti osobní hygieny, kam patří: ranní a večerní
+    hygiena, sprcha, koupel, používání toalety včetně inkontinenčních
+    pomůcek, manikúra, pedikúra, holení. Pomoc by měla být popsána
+    srozumitelně a konkrétně – co klientka zvládne sama a s čím potřebuje
+    podporu. Pokud v textu chybí důležité informace, napiš několik
+    jednoduchých otázek, které pomohou doplnit či upřesnit popis.
+    Otázky piš přátelským a povzbudivým tónem, aby byly srozumitelné i pro
+    klientku s lehkou demencí. Pokud je text kompletní, další otázky
+    nepokládej.`
+  : `Jsi profesionální redaktor. Přeformuluj následující text tak,
+    aby byl jasný, srozumitelný a vhodný do individuálního plánu:
+    `;
+
 
   const payload = {
     messages: [
