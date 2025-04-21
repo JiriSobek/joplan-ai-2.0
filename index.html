@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Individuální Plány – Pomocník</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    textarea {
+      width: 750px;
+      height: 200px;
+      font-family: sans-serif;
+      font-size: 14px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      background-color: #eb675c;
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      font-family: sans-serif;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:focus { outline: none; }
+    button:hover { opacity: 0.9; }
+    #output {
+      width: 750px;
+      min-height: 120px;
+      background-color: #fff;
+      padding: 10px;
+      margin-top: 10px;
+      white-space: pre-wrap;
+      font-family: sans-serif;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <textarea id="input" placeholder="Sem napište text…"></textarea><br>
+  <button id="advise">Poradit</button>
+  <button id="improve">Vylepšit</button>
+  <button id="undo">Zpět</button>
+  <button id="copy">Kopírovat</button>
+  <div id="output"></div>
+
+  <script>
+    // ====== DOHRAJ SI SVÉ hodnoty ======
+    const ENDPOINT = 'https://<tvuj-resource>.openai.azure.com';
+    const KEY      = '<tvuj-api-key>';
+    const DEPLOY   = '<nazev-deploymentu>'; // jak jsi pojmenoval model v Azure
+
+    let originalText = '';
+
+    async function runPrompt(mode) {
+      const text = document.getElementById('input').value;
+      if (mode === 'improve') originalText = text;
+
+      const systemPrompt = mode === 'advise'
+        ? 'Prompt č. 1: Posuď následující text a navrhni doporučení pro pečovatelku:'
+        : 'Prompt č. 2: Přeformuluj následující text tak, aby byl jasnější a profesionálnější:';
+
+      const res = await fetch(
+        `${ENDPOINT}/openai/deployments/${DEPLOY}/chat/completions?api-version=2023-03-15-preview`, 
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'api-key': KEY
+          },
+          body: JSON.stringify({
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user',   content: text }
+            ]
+          })
+        }
+      );
+      const j = await res.json();
+      const out = j.choices[0].message.content.trim();
+
+      if (mode === 'improve') {
+        document.getElementById('input').value = out;
+      } else {
+        document.getElementById('output').innerText = out;
+      }
+    }
+
+    document.getElementById('advise').onclick  = () => runPrompt('advise');
+    document.getElementById('improve').onclick = () => runPrompt('improve');
+    document.getElementById('undo').onclick    = () => document.getElementById('input').value = originalText;
+    document.getElementById('copy').onclick    = () => navigator.clipboard.writeText(document.getElementById('input').value);
+  </script>
+</body>
+</html>
