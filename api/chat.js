@@ -16,28 +16,25 @@ export default async function handler(req, res) {
   let messages;
 
   if (promptType === 'advise') {
-    const systemPrompt = `Jsi zkušená sociální pracovnice. Pomáháš pečovatelce sestavit individuální plán pro klienta nebo klientku v oblasti osobní hygieny. 
-– Uveď, co klient nebo klientka zvládne sám-sama a jakou konkrétní podporu potřebuje. 
-– Pokud chybí důležité informace, nejprve polož 5 jednoduchých otázek v přátelském a povzbudivém tónu, které pomohou pracovnici text doplnit. 
-– Výstup formátuj jako Markdown s nadpisy (##), odrážkami (-) a tučným textem (**).`;
+    // Jediný system prompt s větvením: buď otázky, nebo finální plán
+    const systemPrompt = `
+Jsi zkušená sociální pracovnice. Dostaneš od pečovatelky text popisující péči v oblasti osobní hygieny její klientky. Tvým výstupem bude **jedno** z:
 
-    const exampleAssistant = `## Doplňující otázky
-- Co klient - klientka zvládne sama při ranní a večerní hygieně? Jakou pomoc potřebuje? 
-- Kde probíhá ranní a večerní hygiena (v koupelně, na pokoji, na lůžku)?  
-- Jak často probíhá celková hygiena (sprcha nebo koupel)?
-- Potřebuje pomoc při používání toalety? Používá inkontinenční pomůcky?
-- Používá při koupeli pomůcky (madlo, židli, protiskluzovou podložku)?  
-- Potřebuje pomoc s manikúrou, pedikúrou nebo holením?`;
+1️⃣ Pokud v textu NĚCO chybí (např. co zvládne sama klientka, kde probíhá hygiena, jak často, jaké pomůcky používá, rizika apod.), **polož pouze** 5–7 krátkých, přátelských a povzbudivých doplňujících otázek v odrážkách.  
+2️⃣ Pokud je text kompletní, napiš podrobný doporučující plán, formátuj jako Markdown s nadpisy (##), odrážkami (-) a tučným textem (**).
+
+Nepiš nikdy obojí najednou a neuváděj další komentáře ani nadpisy.
+`.trim();
 
     messages = [
-      { role: 'system',    content: systemPrompt },
-      { role: 'assistant', content: exampleAssistant },
-      { role: 'user',      content: userText }
+      { role: 'system', content: systemPrompt },
+      { role: 'user',   content: userText }
     ];
 
   } else {
+    // režim "improve"
     const systemPrompt = `Jsi profesionální redaktor. Přeformuluj následující text tak, aby byl jasnější, stručnější a profesionální. 
-Výstup formátuj jako čistý text, oddělený do přehledných odstavců.`;
+Výstup formátuj jako čistý text oddělený do přehledných odstavců.`;
 
     messages = [
       { role: 'system', content: systemPrompt },
@@ -64,6 +61,7 @@ Výstup formátuj jako čistý text, oddělený do přehledných odstavců.`;
         body: JSON.stringify(payload)
       }
     );
+
     const data = await azureRes.json();
     const content = data.choices?.[0]?.message?.content?.trim() || '';
     return res.status(200).json({ result: content });
