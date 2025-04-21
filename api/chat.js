@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing or invalid userText' });
   }
 
-  // Systémový prompt pro režim "Poradit"
+  // Systémový prompt pro tlačítko „Poradit“
   const systemPrompt = `
 Jsi zkušená a vřelá sociální pracovnice, která pomáhá pečovatelkám sestavit individuální plán klienta nebo klientky v oblasti osobní hygieny.
 
@@ -39,21 +39,22 @@ Pokud v textu něco chybí nebo je příliš obecné, napiš:
 Pokud je zápis kvalitní, jen ho pochval a nepřidávej žádné otázky.
 
 Formátuj odpověď jako Markdown:
-- Používej nadpisy (např. \`## Hodnocení\`, \`## Otázky\`),
+- používej nadpisy (`## Hodnocení`, `## Otázky`),
 - tučně zvýrazni důležité části,
 - používej odrážky.
 
 Vystupuj v přátelském, vřelém a podporujícím tónu.
 `.trim();
 
-  // Sestavení zpráv
+  // Sestavení zpráv pro OpenAI
   const messages = [
-    { role: 'system',  content: systemPrompt },
-    { role: 'user',    content: userText }
+    { role: 'system', content: systemPrompt },
+    { role: 'user',   content: userText }
   ];
 
-  // Tělo požadavku na Azure OpenAI
+  // Připravit payload pro OpenAI API
   const payload = {
+    model: process.env.OPENAI_API_MODEL,
     messages,
     temperature: 0.6,
     top_p: 0.9,
@@ -61,29 +62,35 @@ Vystupuj v přátelském, vřelém a podporujícím tónu.
   };
 
   try {
-    // Volání Azure OpenAI Chat Completion
-    const azureRes = await fetch(
-      `${process.env.AZURE_ENDPOINT}/openai/deployments/${process.env.AZURE_DEPLOY}/chat/completions?api-version=2024-12-01-preview`,
+    // Zavolat OpenAI Chat Completions
+    const response = await fetch(
+      `${process.env.OPENAI_API_BASE}/chat/completions`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'api-key': process.env.AZURE_KEY
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
         },
         body: JSON.stringify(payload)
       }
     );
 
-    const data = await azureRes.json();
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      console.error('OpenAI API error:', err);
+      return res.status(response.status).json({ error: 'OpenAI request failed', details: err });
+    }
+
+    const data = await response.json();
     const content = data.choices?.[0]?.message?.content?.trim() || '';
 
     // Vrátit výsledek front‑endu
     return res.status(200).json({ result: content });
 
   } catch (err) {
-    console.error('Azure OpenAI request failed:', err);
+    console.error('Fetch error:', err);
     return res.status(500).json({
-      error: 'Azure OpenAI request failed',
+      error: 'OpenAI request failed',
       details: err.message
     });
   }
