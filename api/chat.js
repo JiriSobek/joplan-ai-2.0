@@ -33,10 +33,11 @@ Kontroluj, zda je:
 Pokud něco chybí, napiš 5–7 krátkých doplňujících otázek, které pomohou text upřesnit.
 
 Formátuj odpověď jako Markdown:
-- Nadpisy začínají dvěma mřížkami, např. ## Nadpis
-- Položky v odrážkách pomocí pomlčky, např. - Položka
-- Tučný text formátuj hvězdičkami, např. **text**
+- Nadpisy začínají dvěma mřížkami (##)
+- Položky v odrážkách pomocí pomlčky (-)
+- Tučný text pomocí dvou hvězdiček (např. **text**)
 `.trim();
+
 
   const improvePrompt = `
 Jsi profesionální redaktor. Přeformuluj následující text tak, aby byl jasnější, stručnější a profesionální.
