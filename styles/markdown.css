@@ -1,0 +1,20 @@
+.markdown h2 {
+  font-size: 1.5rem;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+}
+
+.markdown ul {
+  padding-left: 1.5em;
+  list-style-type: disc;
+  margin-bottom: 1em;
+}
+
+.markdown li {
+  margin-bottom: 0.5em;
+}
+
+.markdown strong {
+  font-weight: bold;
+}
