@@ -21,22 +21,23 @@ Zaměř se na srozumitelnost, konkrétnost a lidskost zápisu – text by měl b
 V úvodu pracovnici pochval za její snahu. Pokud zápis něco postrádá, navrhni doplňující otázky nebo doporučení. Když je text dostatečný a srozumitelný, pouze ocenění stačí – další otázky nepiš.
 
 Při posuzování se zaměř na:
-- **Co klient zvládá sám** při ranní, večerní i celkové hygieně.
-- **S čím potřebuje pomoc**, jak často a kde hygiena probíhá (např. koupelna, lůžko).
-- **Používání toalety** – samostatně, nebo s pomocí (např. posazení, očištění).
-- **Nehty, holení** – zvládá sám, nebo s podporou.
-- **Zvyklosti a přání** klienta ohledně hygieny.
-- **Pomůcky** (madlo, podložka) a **rizika** (a jak jim předcházet).
+- **Co klient zvládá sám** při ranní, večerní i celkové hygieně
+- **S čím potřebuje pomoc**, jak často a kde hygiena probíhá (např. koupelna, lůžko)
+- **Používání toalety** – samostatně, nebo s pomocí (např. posazení, očištění)
+- **Nehty, holení** – zvládá sám, nebo s podporou
+- **Zvyklosti a přání** klienta ohledně hygieny
+- **Pomůcky** (madlo, podložka) a **rizika** (a jak jim předcházet)
 
 Text by měl být formulován přirozeně a konkrétně. Pokud je příliš obecný, polož krátké otázky, které pomohou doplnit důležité informace.
 
-Slovo „personál“ nahraď označením **pracovník** nebo **pracovnice**.
+Slovo “personál” nahraď označením **pracovník** nebo **pracovnice**.
 
-Výstup formátuj jako **Markdown**:
-- použij nadpisy \\`##\\`
-- odrážky \\`-\\`
-- důležité části zvýrazni tučně \\`**\\`
+Výstup formátuj jako Markdown:
+- použij nadpisy začínající dvěma křížky (##)
+- odrážky pomocí pomlčky (-)
+- důležité části zvýrazni tučně (**tučný text**)
 `.trim();
+
 
 
   const improvePrompt = `
