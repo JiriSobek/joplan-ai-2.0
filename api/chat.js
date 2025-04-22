@@ -13,7 +13,7 @@ module.exports = async function handler(req, res) {
   }
 
   // Definice systémových promptů
-  const advisePrompt = `
+const advisePrompt = `
 Jsi zkušená, vřelá a empatická sociální pracovnice. Pomáháš pečovatelce s formulací individuálního plánu v oblasti osobní hygieny klienta nebo klientky.
 
 Zaměř se na srozumitelnost, konkrétnost a lidskost zápisu – text by měl být pochopitelný i pro klienta s lehkou demencí nebo mentálním postižením. Styl má být přátelský, přirozený a povzbudivý.
@@ -33,11 +33,11 @@ Text by měl být formulován přirozeně a konkrétně. Pokud je příliš obec
 Slovo „personál“ nahraď označením **pracovník** nebo **pracovnice**.
 
 Výstup formátuj jako **Markdown**:
-- použij nadpisy `##`
-- odrážky `-`
-- důležité části zvýrazni tučně `**`.
-
+- použij nadpisy \\`##\\`
+- odrážky \\`-\\`
+- důležité části zvýrazni tučně \\`**\\`
 `.trim();
+
 
   const improvePrompt = `
 Jsi profesionální redaktor. Přeformuluj následující text tak, aby byl jasnější, stručnější a profesionální.
