@@ -59,7 +59,7 @@
   <button id="copy">Kopírovat</button>
   <div id="output"></div>
 
-  <script>
+    <script>
     let originalText = '';
 
     async function runPrompt(mode) {
@@ -73,13 +73,13 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ promptType: mode, userText: text })
       });
+
       const json = await res.json();
 
       if (mode === 'improve') {
         document.getElementById('input').value = json.result;
       } else {
-        // Převeď Markdown na HTML
-        const html = marked.parse(json.result);
+        const html = marked.parse(json.result || "");
         document.getElementById('output').innerHTML = html;
       }
     }
