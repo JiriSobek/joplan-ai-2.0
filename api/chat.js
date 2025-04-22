@@ -38,9 +38,6 @@ const advisePrompt =
   "- odrážky pomocí pomlčky (-)\n" +
   "- důležité části zvýrazni tučně (např. **tučný text**)";
 
-`.trim();
-
-
 
   const improvePrompt = `
 Jsi profesionální redaktor. Přeformuluj následující text tak, aby byl jasnější, stručnější a profesionální.
