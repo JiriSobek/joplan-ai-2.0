@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Individuální Plány – Pomocník</title>
+
+  <!-- ✅ Přidáno: načtení knihovny pro převod Markdown na HTML -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
   <style>
     body { font-family: sans-serif; padding: 20px; }
     textarea {
@@ -38,16 +41,22 @@
       font-size: 14px;
       border-radius: 12px;
     }
+    /* ✅ Přidáno: stylování formátovaného výstupu */
     #output h2 {
       font-size: 18px;
       margin-top: 1em;
       margin-bottom: 0.5em;
     }
     #output ul {
-      padding-left: 1.2em;
+      padding-left: 1.5em;
+      list-style-type: disc;
+      margin-bottom: 1em;
     }
     #output li {
       margin-bottom: 0.4em;
+    }
+    #output strong {
+      font-weight: bold;
     }
   </style>
 </head>
@@ -59,7 +68,7 @@
   <button id="copy">Kopírovat</button>
   <div id="output"></div>
 
-    <script>
+  <script>
     let originalText = '';
 
     async function runPrompt(mode) {
@@ -73,13 +82,12 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ promptType: mode, userText: text })
       });
-
       const json = await res.json();
 
       if (mode === 'improve') {
         document.getElementById('input').value = json.result;
       } else {
-        const html = marked.parse(json.result || "");
+        const html = marked.parse(json.result || '');
         document.getElementById('output').innerHTML = html;
       }
     }
@@ -95,3 +103,4 @@
   </script>
 </body>
 </html>
+
