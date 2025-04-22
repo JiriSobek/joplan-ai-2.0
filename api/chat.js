@@ -32,10 +32,6 @@ Kontroluj, zda je:
 
 Pokud něco chybí, napiš 5–7 krátkých doplňujících otázek, které pomohou text upřesnit.
 
-Formátuj odpověď jako Markdown:
-- Nadpisy začínají dvěma křížky, například "## Nadpis"
-- Položky v odrážkách pomocí pomlčky, například "- Položka"
-- Tučný text formátuj pomocí dvou hvězdiček, například "**text**"
 `.trim();
 
 
