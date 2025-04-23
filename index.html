@@ -1,106 +1,55 @@
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-  <meta charset="UTF-8" />
-  <title>Individuální Plány – Pomocník</title>
+// pages/index.js
+import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 
-  <!-- ✅ Přidáno: načtení knihovny pro převod Markdown na HTML -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+export default function Home() {
+  const [text, setText] = useState("");
+  const [result, setResult] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  <style>
-    body { font-family: sans-serif; padding: 20px; }
-    textarea {
-      width: 750px;
-      height: 200px;
-      font-family: sans-serif;
-      font-size: 14px;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 12px;
-    }
-    button {
-      margin: 5px;
-      padding: 10px 20px;
-      background-color: #eb675c;
-      color: #fff;
-      border: none;
-      border-radius: 25px;
-      font-family: sans-serif;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:focus { outline: none; }
-    button:hover { opacity: 0.9; }
-    #output {
-      width: 750px;
-      min-height: 120px;
-      background-color: #fff;
-      padding: 10px;
-      margin-top: 10px;
-      font-family: sans-serif;
-      font-size: 14px;
-      border-radius: 12px;
-    }
-    /* ✅ Přidáno: stylování formátovaného výstupu */
-    #output h2 {
-      font-size: 18px;
-      margin-top: 1em;
-      margin-bottom: 0.5em;
-    }
-    #output ul {
-      padding-left: 1.5em;
-      list-style-type: disc;
-      margin-bottom: 1em;
-    }
-    #output li {
-      margin-bottom: 0.4em;
-    }
-    #output strong {
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <textarea id="input" placeholder="Sem napište text…"></textarea><br>
-  <button id="advise">Poradit</button>
-  <button id="improve">Vylepšit</button>
-  <button id="undo">Zpět</button>
-  <button id="copy">Kopírovat</button>
-  <div id="output"></div>
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    setResult("");
 
-  <script>
-    let originalText = '';
-
-    async function runPrompt(mode) {
-      const text = document.getElementById('input').value;
-      if (mode === 'improve') {
-        originalText = text;
-      }
-
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ promptType: mode, userText: text })
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, action: "comment" }),
       });
-      const json = await res.json();
-
-      if (mode === 'improve') {
-        document.getElementById('input').value = json.result;
-      } else {
-        const html = marked.parse(json.result || '');
-        document.getElementById('output').innerHTML = html;
-      }
+      const data = await response.json();
+      setResult(data.result || "Žádná odpověď");
+    } catch (error) {
+      setResult("Došlo k chybě při komunikaci se serverem.");
     }
 
-    document.getElementById('advise').onclick  = () => runPrompt('advise');
-    document.getElementById('improve').onclick = () => runPrompt('improve');
-    document.getElementById('undo').onclick    = () => {
-      document.getElementById('input').value = originalText;
-    };
-    document.getElementById('copy').onclick    = () => {
-      navigator.clipboard.writeText(document.getElementById('input').value);
-    };
-  </script>
-</body>
-</html>
+    setLoading(false);
+  }
 
+  return (
+    <div style={{ padding: 20, maxWidth: 800, margin: "0 auto" }}>
+      <h1>Joplan AI – hygiena</h1>
+      <form onSubmit={handleSubmit}>
+        <textarea
+          rows={6}
+          style={{ width: "100%", marginBottom: 10 }}
+          placeholder="Vlož text popisu podpory…"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? "Načítání..." : "Získat komentář"}
+        </button>
+      </form>
+
+      <div style={{ marginTop: 30 }}>
+        {loading ? (
+          <div style={{ fontSize: "16px" }}>Moment, přemýšlím…</div>
+        ) : (
+          <ReactMarkdown>{result}</ReactMarkdown>
+        )}
+      </div>
+    </div>
+  );
+}
