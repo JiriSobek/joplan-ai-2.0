@@ -5,31 +5,38 @@ import ReactMarkdown from "react-markdown";
 export default function Home() {
   const [text, setText] = useState("");
   const [result, setResult] = useState("");
-  const [loading, setLoading] = useState(false);
 
+  // tahle funkce se spustí po odeslání formuláře
   async function handleSubmit(e) {
     e.preventDefault();
-    setLoading(true);
+
+    // 1) Před odesláním ukážeme nápis
+    document.getElementById("loading").style.display = "block";
     setResult("");
 
     try {
+      // 2) Pošleme dotaz na API
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, action: "comment" }),
       });
       const data = await response.json();
-      setResult(data.result || "Žádná odpověď");
-    } catch (error) {
-      setResult("Došlo k chybě při komunikaci se serverem.");
-    }
 
-    setLoading(false);
+      // 3) Výsledek zobrazíme
+      setResult(data.result || "Žádná odpověď");
+    } catch {
+      setResult("Došlo k chybě při komunikaci se serverem.");
+    } finally {
+      // 4) A nápis zase skryjeme
+      document.getElementById("loading").style.display = "none";
+    }
   }
 
   return (
     <div style={{ padding: 20, maxWidth: 800, margin: "0 auto" }}>
       <h1>Joplan AI – hygiena</h1>
+
       <form onSubmit={handleSubmit}>
         <textarea
           rows={6}
@@ -38,17 +45,23 @@ export default function Home() {
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
-        <button type="submit" disabled={loading}>
-          {loading ? "Načítání..." : "Získat komentář"}
-        </button>
+        <button type="submit">Získat komentář</button>
       </form>
 
+      {/* tady je náš nápis; na začátku je skrytý */}
+      <div
+        id="loading"
+        style={{
+          display: "none",
+          fontSize: "16px",
+          marginTop: 30,
+        }}
+      >
+        Moment, přemýšlím…
+      </div>
+
       <div style={{ marginTop: 30 }}>
-        {loading ? (
-          <div style={{ fontSize: "16px" }}>Moment, přemýšlím…</div>
-        ) : (
-          <ReactMarkdown>{result}</ReactMarkdown>
-        )}
+        <ReactMarkdown>{result}</ReactMarkdown>
       </div>
     </div>
   );
