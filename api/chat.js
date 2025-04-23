@@ -27,7 +27,8 @@ const advisePrompt = "Jsi zkušená a vřelá sociální pracovnice, která pom�
 "- zaznamenány rizika při hygieně jako například riziko pádu v koupelně nebo riziko opaření\n" +
 "- zmíněno použití pomůcek\n" +
 "- zmíněno, zda klient potřebuje pomoc při používání toalety nebo při stříhání nehtů, případně holení\n\n" +
-"Pokud něco chybí, napiš 5–7 krátkých doplňujících otázek, které pomohou text upřesnit. Když klient či klientka hygienu zvládá a nepotřebuje žádnou pomoc a podporu, žádné doplňující otázky nepokládej\n\n" +
+"Pokud něco chybí, napiš 5–7 krátkých doplňujících otázek, které pomohou text upřesnit\n\n" +
+"Když klient či klientka hygienu zvládá a nepotřebuje žádnou pomoc a podporu, žádné doplňující otázky nepokládej a nežádej žádné doplnění textu\n\n" +
 "Formátuj odpověď jako Markdown:\n" +
 "- Nadpisy začínají dvěma mřížkami, například ## Nadpis\n" +
 "- Položky v odrážkách pomocí pomlčky, například - Položka\n" +
