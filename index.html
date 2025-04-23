@@ -1,36 +1,33 @@
-// pages/index.js
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 
 export default function Home() {
   const [text, setText] = useState("");
   const [result, setResult] = useState("");
+  const [loading, setLoading] = useState(false); // stav čekání
 
-  // tahle funkce se spustí po odeslání formuláře
   async function handleSubmit(e) {
     e.preventDefault();
-
-    // 1) Před odesláním ukážeme nápis
-    document.getElementById("loading").style.display = "block";
-    setResult("");
+    setLoading(true);     // zobrazí nápis
+    setResult("");        // smaže starou odpověď
 
     try {
-      // 2) Pošleme dotaz na API
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, action: "comment" }),
+        body: JSON.stringify({
+          userText: text,         // správný název
+          promptType: "advise"    // správný název
+        }),
       });
-      const data = await response.json();
 
-      // 3) Výsledek zobrazíme
+      const data = await response.json();
       setResult(data.result || "Žádná odpověď");
     } catch {
       setResult("Došlo k chybě při komunikaci se serverem.");
-    } finally {
-      // 4) A nápis zase skryjeme
-      document.getElementById("loading").style.display = "none";
     }
+
+    setLoading(false); // skryje nápis
   }
 
   return (
@@ -45,21 +42,19 @@ export default function Home() {
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
-        <button type="submit">Získat komentář</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Načítání..." : "Získat komentář"}
+        </button>
       </form>
 
-      {/* tady je náš nápis; na začátku je skrytý */}
-      <div
-        id="loading"
-        style={{
-          display: "none",
-          fontSize: "16px",
-          marginTop: 30,
-        }}
-      >
-        Moment, přemýšlím…
-      </div>
+      {/* zobrazení nápisu během čekání */}
+      {loading && (
+        <div style={{ fontSize: "16px", marginTop: 30 }}>
+          Moment, přemýšlím…
+        </div>
+      )}
 
+      {/* výstup s formátováním */}
       <div style={{ marginTop: 30 }}>
         <ReactMarkdown>{result}</ReactMarkdown>
       </div>
