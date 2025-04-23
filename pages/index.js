@@ -14,7 +14,10 @@ export default function Home() {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, action: "comment" }),
+        body: JSON.stringify({
+          userText: text,
+          promptType: "advise"
+        }),
       });
       const data = await response.json();
       setResult(data.result || "Žádná odpověď");
@@ -25,12 +28,12 @@ export default function Home() {
   }
 
   return (
-    <div style={{ padding: 20, maxWidth: 800, margin: "0 auto" }}>
+    <div style={{ padding: 20, maxWidth: 800, margin: "0 auto", fontSize: "16px" }}>
       <h1>Joplan AI – hygiena</h1>
       <form onSubmit={handleSubmit}>
         <textarea
           rows={6}
-          style={{ width: "100%", marginBottom: 10 }}
+          style={{ width: "100%", marginBottom: 10, fontSize: "16px" }}
           placeholder="Vlož text popisu podpory…"
           value={text}
           onChange={(e) => setText(e.target.value)}
