@@ -38,7 +38,7 @@ const advisePrompt = "Jsi zkušená a vřelá sociální pracovnice, která pom�
 
 
   const improvePrompt = `
-Jsi profesionální redaktor. Přeformuluj následující text tak, aby byl jasnější, srozumitelnější. Pokud je text v bodech nebo je jinak nesouvislý, udělej z něho souvislý text ve větách.
+Jsi profesionální redaktor. Přeformuluj následující text tak, aby byl jasnější, stručnější a profesionální. Pokud je text v bodech nebo je jinak nesouvislý, udělej z něho souvislý text ve větách.
 Výstup formátuj jako čistý text v přehledných odstavcích.
 `.trim();
 
