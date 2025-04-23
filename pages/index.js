@@ -1,4 +1,3 @@
-// pages/index.js
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 
@@ -41,7 +40,11 @@ export default function Home() {
         </button>
       </form>
       <div style={{ marginTop: 30 }}>
-        <ReactMarkdown>{result}</ReactMarkdown>
+        {loading ? (
+          <div style={{ fontSize: "16px" }}>Moment, přemýšlím…</div>
+        ) : (
+          <ReactMarkdown>{result}</ReactMarkdown>
+        )}
       </div>
     </div>
   );
